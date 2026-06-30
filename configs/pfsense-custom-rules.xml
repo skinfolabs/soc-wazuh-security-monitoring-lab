@@ -1,0 +1,30 @@
+<group name="pfsense,firewall,">
+  <rule id="100111" level="3">
+    <decoded_as>pfsense-custom</decoded_as>
+    <description>pfSense log received</description>
+  </rule>
+
+  <rule id="100112" level="3">
+    <if_sid>100111</if_sid>
+    <match>Successful login</match>
+    <description>pfSense: Successful login from $(srcip)</description>
+  </rule>
+
+  <rule id="100113" level="5">
+    <if_sid>100111</if_sid>
+    <match>pass</match>
+    <description>pfSense: Allowed traffic from $(srcip) to $(dstip)</description>
+  </rule>
+
+  <rule id="100114" level="7">
+    <if_sid>100111</if_sid>
+    <match>block</match>
+    <description>pfSense: Blocked traffic from $(srcip) to $(dstip)</description>
+  </rule>
+
+  <rule id="100115" level="10">
+    <if_sid>100111</if_sid>
+    <match>authentication error</match>
+    <description>pfSense: Authentication error for user $(dstuser) from $(srcip)</description>
+  </rule>
+</group>

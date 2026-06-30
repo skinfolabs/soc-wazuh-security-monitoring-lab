@@ -1,0 +1,4 @@
+<localfile>
+  <log_format>json</log_format>
+  <location>C:\Program Files\Suricata\log\eve.json</location>
+</localfile>

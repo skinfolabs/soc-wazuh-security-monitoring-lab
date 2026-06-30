@@ -1,0 +1,9 @@
+<decoder name="pfsense-custom">
+  <prematch>filterlog</prematch>
+</decoder>
+
+<decoder name="pfsense-fields">
+  <parent>pfsense-custom</parent>
+  <regex>(\w+)\d+:\S*,\S*,\S*,(\S+),\S*,\S*,(\S+),\S*,\S*,\S*,\S*,\S*,\S*,\S*,\S*,\S*,\S*,(\S+),\S*,(\S+),(\S+),(\d+);(\d+),\S*</regex>
+  <order>logsource,id,section,protocol,srcip,dstip,srcport,dstport</order>
+</decoder>

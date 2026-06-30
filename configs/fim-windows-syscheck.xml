@@ -1,0 +1,4 @@
+<syscheck>
+  <disabled>no</disabled>
+  <directories check_all="yes" report_changes="yes" realtime="yes">C:\Users\dell\OneDrive\Bureau</directories>
+</syscheck>
