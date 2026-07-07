@@ -2,30 +2,18 @@
 
 This chapter adds firewall visibility to the SOC lab by forwarding pfSense logs to Wazuh. pfSense acts as the network gateway, while Wazuh collects and analyzes the firewall events.
 
----
-
-## Purpose
-
-The goal is to deploy pfSense in VMware, assign WAN and LAN interfaces, access the web interface, enable remote syslog, and prepare Wazuh to receive and classify pfSense events.
-
 ## Technical Context
 
-A firewall inspects and controls incoming and outgoing traffic according to predefined rules. In a simple analogy, it works like a security checkpoint: traffic that matches allowed policy can pass, while unwanted or suspicious traffic can be denied, logged, or inspected more deeply.
+A firewall controls traffic according to policy and can log allowed, blocked, authentication, DHCP, DNS, VPN, and system events. pfSense is used here as the lab gateway and firewall.
 
-Firewalls help prevent unauthorized access, block malicious traffic, and segment networks so internal systems are not exposed unnecessarily. Common firewall approaches include packet filtering, stateful inspection, proxy-based filtering, and next-generation firewall features. Each adds a different level of context, from basic IP/port decisions to application-aware and threat-aware inspection.
+Forwarding pfSense logs to Wazuh gives the SOC workflow network-edge visibility. Firewall events can then be compared with endpoint and IDS telemetry instead of being reviewed as isolated records.
 
-pfSense is used in this lab as the network gateway and firewall. It can generate logs for allowed traffic, blocked traffic, authentication events, DHCP, DNS, VPN activity, and system events. Forwarding those logs to Wazuh gives the SOC analyst a central view of network behavior and allows firewall events to be reviewed together with endpoint and IDS telemetry.
+**Implemented controls:**
 
-Combining pfSense with Wazuh creates a small SOC-style workflow. pfSense observes the traffic path at the network edge, while Wazuh collects and analyzes the logs. This makes it possible to compare network events with endpoint events instead of treating them as separate, disconnected records.
-
-## Steps Covered
-
-| Step | Description |
-|------|-------------|
-| Build pfSense VM | Assign WAN and LAN interfaces |
-| Access web UI | Login and verify dashboard |
-| Forward logs | Enable remote syslog to Wazuh |
-| Parse logs | Add Wazuh syslog input, decoder, and custom rules |
+- Built the pfSense VM with WAN and LAN interfaces.
+- Validated access to the pfSense web interface.
+- Enabled remote syslog forwarding to Wazuh.
+- Added Wazuh syslog input, decoder, and rule snippets for pfSense events.
 
 ---
 
@@ -47,7 +35,7 @@ The console confirms that pfSense has a LAN address and can be managed from the 
 
 ### Step 02 - Access the pfSense Web Interface
 
-A browser from a LAN-connected VM is used to access `https://192.168.1.1/`. The default credentials are used for initial setup, and the default password should be changed immediately after first login.
+A LAN-connected VM accesses `https://192.168.1.1/`. The default credentials are used only for initial isolated lab setup.
 
 > Default firewall credentials are acceptable only during isolated lab setup. In real environments, leaving default credentials active is a serious exposure.
 
@@ -113,34 +101,31 @@ Wazuh must listen for syslog on UDP port `514`, and custom decoder/rule logic ca
 </rule>
 ```
 
-The custom rule levels give the firewall events different investigation weight. Informational events such as successful logins can be lower severity, allowed traffic can be normal visibility, blocked traffic can be treated as warning-level evidence, and authentication errors can be raised higher because they may indicate attempted unauthorized access.
+The custom rule levels give firewall events different investigation weight: normal visibility for allowed traffic, warning-level evidence for blocks, and higher severity for authentication errors.
 
-Full snippets are stored in [configs/pfsense-syslog-input.xml](../../configs/pfsense-syslog-input.xml), [configs/pfsense-custom-decoder.xml](../../configs/pfsense-custom-decoder.xml), and [configs/pfsense-custom-rules.xml](../../configs/pfsense-custom-rules.xml).
+Full snippets are stored in [pfsense-syslog-input.xml](pfsense-syslog-input.xml), [pfsense-custom-decoder.xml](pfsense-custom-decoder.xml), and [pfsense-custom-rules.xml](pfsense-custom-rules.xml).
 
 The configuration partially validates pfSense integration by defining the forwarding path and parsing logic. A production deployment would also validate live received events in Wazuh and test each custom rule against real pfSense `filterlog` samples.
 
 ---
 
-## Validation
+## Validation and Summary
 
-pfSense is reachable, remote logging is configured, and Wazuh has syslog input and parsing snippets prepared. The evidence confirms configuration; live log receipt and decoder matching should be validated with actual pfSense events.
-
-## Chapter Summary
-
-pfSense extends the lab with firewall telemetry. The next chapter adds Suricata IDS visibility, which gives Wazuh more detailed network threat-detection events.
+pfSense is reachable, remote logging is configured, and Wazuh has syslog input and parsing snippets prepared. The evidence confirms configuration; live log receipt and decoder matching should still be tested with actual pfSense `filterlog` samples before relying on the custom rules.
 
 ---
 
 ## Project Chapters
 
-| Chapter | Description |
-|---------|-------------|
-| [Project Overview](../01-project-overview/README.md) | Scenario, architecture, tools, and lab traffic flow |
-| [Wazuh Server and Agent Onboarding](../02-wazuh-server-agent-onboarding/README.md) | Wazuh OVA deployment, dashboard access, service recovery, and Windows agent registration |
-| [pfSense Log Integration](../03-pfsense-log-integration/README.md) | Firewall VM setup, remote syslog forwarding, and Wazuh decoder/rule logic |
-| [Suricata IDS Integration](../04-suricata-ids-integration/README.md) | Suricata installation, EVE JSON logging, Wazuh ingestion, and alert validation |
-| [VirusTotal Threat Intelligence](../05-virustotal-threat-intelligence/README.md) | API key handling, Wazuh manager integration, and monitored directory enrichment |
-| [File Integrity Monitoring](../06-file-integrity-monitoring/README.md) | Windows FIM configuration and file create/modify/delete alert validation |
-| [Sysmon Log Ingestion](../07-sysmon-log-ingestion/README.md) | Windows Event Log concepts, Sysmon installation, and EventChannel ingestion |
-| [SSH Brute Force Detection](../08-ssh-brute-force-detection/README.md) | Hydra simulation, Wazuh detection, Windows Event 4625 analysis, and defensive controls |
-| [Final Summary](../09-final-summary/README.md) | Results, limitations, skills, and hardening recommendations |
+| # | Chapter | Description |
+|---|---------|-------------|
+| 0 | [Project Overview](../../README.md) | Main project overview, objectives, tools, and skills |
+| 1 | [Topology and Lab Environment](../01-topology-and-lab-environment/README.md) | Lab architecture, component roles, telemetry flow, and trust boundaries |
+| 2 | [Wazuh Server and Agent Onboarding](../02-wazuh-server-agent-onboarding/README.md) | Wazuh OVA access, service recovery, and Windows agent registration |
+| 3 | [pfSense Log Integration](../03-pfsense-log-integration/README.md) | Firewall setup, remote syslog forwarding, and Wazuh decoder/rule logic |
+| 4 | [Suricata IDS Integration](../04-suricata-ids-integration/README.md) | Suricata EVE JSON logging, Wazuh ingestion, and alert validation |
+| 5 | [VirusTotal Threat Intelligence](../05-virustotal-threat-intelligence/README.md) | API key handling, Wazuh manager integration, and monitored directory enrichment |
+| 6 | [File Integrity Monitoring](../06-file-integrity-monitoring/README.md) | Windows FIM configuration and file-change alert validation |
+| 7 | [Sysmon Log Ingestion](../07-sysmon-log-ingestion/README.md) | Windows Event Log concepts, Sysmon setup, and EventChannel ingestion |
+| 8 | [SSH Brute Force Detection](../08-ssh-brute-force-detection/README.md) | Hydra simulation, Wazuh detection, and Windows Event 4625 analysis |
+| 9 | [Final Summary](../09-final-summary/README.md) | Validation summary, production recommendations, and skills demonstrated |

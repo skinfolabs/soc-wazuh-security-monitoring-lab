@@ -2,30 +2,20 @@
 
 This chapter simulates an SSH brute-force attack from Kali Linux against a Windows target with OpenSSH enabled. Wazuh is then used to detect and analyze the repeated failed logon activity.
 
----
-
-## Purpose
-
-The goal is to generate controlled authentication failures, validate that Wazuh detects them, and analyze the Windows Event 4625 fields behind the alert.
-
 ## Technical Context
 
-A brute-force attack repeatedly tries username and password combinations until one succeeds. It is a simple but common technique for gaining unauthorized access to systems, applications, or accounts.
+A brute-force attack repeatedly tries username and password combinations until one succeeds. Related patterns include dictionary attacks with prepared wordlists, hybrid attacks that modify dictionary words, reverse brute-force attacks that test one password against many users, and credential stuffing with leaked credentials.
 
-There are several related password-attack patterns. A simple brute-force attack tries many combinations directly. A dictionary attack uses a prepared list of likely passwords. A hybrid attack modifies dictionary words by adding numbers or symbols. A reverse brute-force attack starts with one common password and tests it against many usernames. Credential stuffing uses leaked username-password pairs from previous breaches.
-
-Hydra is used in this lab to simulate the attack ethically inside a controlled environment. Hydra is a network login testing tool that can perform dictionary-based attacks against many protocols, including SSH, FTP, HTTP, RDP, Telnet, and others. Here it is used only to generate controlled SSH authentication failures for detection validation.
+Hydra is used only inside the lab to generate controlled SSH authentication failures. It supports many protocols, including SSH, FTP, HTTP, RDP, and Telnet.
 
 > Brute-force testing must only be performed against systems you own or have explicit permission to test. Outside a lab, unauthorized password attacks are illegal and harmful.
 
-## Steps Covered
+**Implemented controls:**
 
-| Step | Description |
-|------|-------------|
-| Prepare password list | Create `passwords.txt` on Kali |
-| Run Hydra | Attempt SSH logins against the lab target |
-| Detect in Wazuh | Review failed logon and lockout alerts |
-| Analyze Event 4625 | Interpret Windows failed-logon fields |
+- Prepared a controlled password list on Kali.
+- Ran Hydra against the lab SSH service.
+- Reviewed Wazuh failed-logon and lockout-style alerts.
+- Analyzed Windows Event 4625 fields behind the detection.
 
 ---
 
@@ -106,26 +96,23 @@ The important conclusion is that the Windows endpoint `MyPc` received repeated S
 
 ---
 
-## Validation
+## Validation and Summary
 
-The lab confirms that Hydra generated repeated SSH authentication failures and that Wazuh detected the behavior through Windows Security events. Wazuh classified the failed authentication activity and surfaced repeated failures in Threat Hunting.
-
-## Chapter Summary
-
-The brute-force scenario validates the end-to-end detection path: attack simulation, Windows event generation, Wazuh ingestion, alerting, and field-level analysis.
+The lab confirms that Hydra generated repeated SSH authentication failures and that Wazuh detected the behavior through Windows Security events. This validates the end-to-end detection path: attack simulation, Windows event generation, Wazuh ingestion, alerting, and field-level analysis.
 
 ---
 
 ## Project Chapters
 
-| Chapter | Description |
-|---------|-------------|
-| [Project Overview](../01-project-overview/README.md) | Scenario, architecture, tools, and lab traffic flow |
-| [Wazuh Server and Agent Onboarding](../02-wazuh-server-agent-onboarding/README.md) | Wazuh OVA deployment, dashboard access, service recovery, and Windows agent registration |
-| [pfSense Log Integration](../03-pfsense-log-integration/README.md) | Firewall VM setup, remote syslog forwarding, and Wazuh decoder/rule logic |
-| [Suricata IDS Integration](../04-suricata-ids-integration/README.md) | Suricata installation, EVE JSON logging, Wazuh ingestion, and alert validation |
-| [VirusTotal Threat Intelligence](../05-virustotal-threat-intelligence/README.md) | API key handling, Wazuh manager integration, and monitored directory enrichment |
-| [File Integrity Monitoring](../06-file-integrity-monitoring/README.md) | Windows FIM configuration and file create/modify/delete alert validation |
-| [Sysmon Log Ingestion](../07-sysmon-log-ingestion/README.md) | Windows Event Log concepts, Sysmon installation, and EventChannel ingestion |
-| [SSH Brute Force Detection](../08-ssh-brute-force-detection/README.md) | Hydra simulation, Wazuh detection, Windows Event 4625 analysis, and defensive controls |
-| [Final Summary](../09-final-summary/README.md) | Results, limitations, skills, and hardening recommendations |
+| # | Chapter | Description |
+|---|---------|-------------|
+| 0 | [Project Overview](../../README.md) | Main project overview, objectives, tools, and skills |
+| 1 | [Topology and Lab Environment](../01-topology-and-lab-environment/README.md) | Lab architecture, component roles, telemetry flow, and trust boundaries |
+| 2 | [Wazuh Server and Agent Onboarding](../02-wazuh-server-agent-onboarding/README.md) | Wazuh OVA access, service recovery, and Windows agent registration |
+| 3 | [pfSense Log Integration](../03-pfsense-log-integration/README.md) | Firewall setup, remote syslog forwarding, and Wazuh decoder/rule logic |
+| 4 | [Suricata IDS Integration](../04-suricata-ids-integration/README.md) | Suricata EVE JSON logging, Wazuh ingestion, and alert validation |
+| 5 | [VirusTotal Threat Intelligence](../05-virustotal-threat-intelligence/README.md) | API key handling, Wazuh manager integration, and monitored directory enrichment |
+| 6 | [File Integrity Monitoring](../06-file-integrity-monitoring/README.md) | Windows FIM configuration and file-change alert validation |
+| 7 | [Sysmon Log Ingestion](../07-sysmon-log-ingestion/README.md) | Windows Event Log concepts, Sysmon setup, and EventChannel ingestion |
+| 8 | [SSH Brute Force Detection](../08-ssh-brute-force-detection/README.md) | Hydra simulation, Wazuh detection, and Windows Event 4625 analysis |
+| 9 | [Final Summary](../09-final-summary/README.md) | Validation summary, production recommendations, and skills demonstrated |

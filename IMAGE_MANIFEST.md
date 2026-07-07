@@ -2,7 +2,7 @@
 
 | Screenshot | Used in Report | Image | Description |
 |------------|----------------|-------|-------------|
-| Screenshot 001 | Yes | [`images/01-project-overview/001-wazuh-soc-lab-architecture.png`](images/01-project-overview/001-wazuh-soc-lab-architecture.png) | Lab topology showing the attacker, internet path, pfSense firewall, Suricata IDS/IPS, Wazuh SIEM/XDR server, VirusTotal enrichment, and Wazuh agent endpoint. |
+| Screenshot 001 | Yes | [`images/01-topology-and-lab-environment/001-wazuh-soc-lab-architecture.png`](images/01-topology-and-lab-environment/001-wazuh-soc-lab-architecture.png) | Lab topology showing the attacker, internet path, pfSense firewall, Suricata IDS/IPS, Wazuh SIEM/XDR server, VirusTotal enrichment, and Wazuh agent endpoint. |
 | Screenshot 002 | Yes | [`images/02-wazuh-server-agent-onboarding/002-wazuh-login-page.png`](images/02-wazuh-server-agent-onboarding/002-wazuh-login-page.png) | Wazuh dashboard login page after the virtual appliance is reachable in the browser. |
 | Screenshot 003 | Yes | [`images/02-wazuh-server-agent-onboarding/003-dashboard-server-not-ready.png`](images/02-wazuh-server-agent-onboarding/003-dashboard-server-not-ready.png) | Browser message showing that the Wazuh dashboard service was reachable but not ready to serve the interface. |
 | Screenshot 004 | Yes | [`images/02-wazuh-server-agent-onboarding/004-main-wazuh-dashboard.png`](images/02-wazuh-server-agent-onboarding/004-main-wazuh-dashboard.png) | Main Wazuh dashboard after the required services are running and the interface loads correctly. |

@@ -2,21 +2,15 @@
 
 This chapter integrates Suricata with Wazuh so network IDS alerts can be reviewed in the SIEM. Suricata inspects traffic and writes structured EVE JSON logs that the Wazuh agent can collect.
 
----
-
-## Purpose
-
-The goal is to install Suricata on Windows, verify packet capture support through Npcap, enable EVE JSON output, configure the Wazuh agent to read `eve.json`, and validate Suricata alerts in Wazuh.
-
 ## Technical Context
 
-Intrusion Detection Systems and Intrusion Prevention Systems are important parts of layered network defense. They inspect traffic for known threats, suspicious patterns, indicators of compromise, and policy violations. The key difference is what happens after detection.
+Intrusion Detection Systems and Intrusion Prevention Systems inspect traffic for known threats, suspicious patterns, indicators of compromise, and policy violations. The key difference is what happens after detection.
 
 An IDS, or Intrusion Detection System, inspects traffic and generates alerts or logs when it finds suspicious activity. IDS detection can use signatures and rules, known indicators such as hashes, domains, URLs, TLS or SSH fingerprints, protocol anomalies, and scripting logic such as Lua-based detection. An IDS is mainly visibility-focused: it tells the analyst what happened, but it does not normally block the traffic.
 
 An IPS, or Intrusion Prevention System, is enforcement-focused. It can allow, drop, or reject traffic based on inspection results. IPS mode is more powerful but also riskier because poorly tuned rules can block legitimate traffic.
 
-Suricata is an open-source network threat detection engine that can operate as both IDS and IPS. In this lab, Suricata is used mainly in IDS mode so suspicious network activity is logged and then sent to Wazuh for SIEM visibility. EVE JSON is the structured output format used by Suricata; it makes fields such as alert signature, source IP, destination IP, protocol, and event type easier for Wazuh to parse and search.
+Suricata is an open-source network threat detection engine that can operate as IDS or IPS. In this lab it is used mainly as an IDS sensor. EVE JSON is the structured Suricata output format, making alert signature, source IP, destination IP, protocol, and event type easier for Wazuh to parse.
 
 ## IDS vs. IPS Overview
 
@@ -27,15 +21,13 @@ Suricata is an open-source network threat detection engine that can operate as b
 
 In this project, Suricata is treated as an IDS sensor. That means the main goal is to generate network-security evidence and forward it into Wazuh, not to prove live blocking.
 
-## Steps Covered
+**Implemented controls:**
 
-| Step | Description |
-|------|-------------|
-| Install and prepare Suricata | Install Suricata and Npcap |
-| Enable EVE JSON | Configure `suricata.yaml` |
-| Run Suricata | Start the IDS sensor on the selected interface |
-| Ingest EVE logs | Add Wazuh agent localfile entry |
-| Validate alerts | Generate test traffic and review Threat Hunting |
+- Installed Suricata and verified Npcap packet-capture support.
+- Enabled EVE JSON logging in `suricata.yaml`.
+- Started Suricata on the selected interface.
+- Configured the Wazuh agent to read Suricata `eve.json`.
+- Validated Suricata events in Wazuh Threat Hunting.
 
 ---
 
@@ -43,9 +35,7 @@ In this project, Suricata is treated as an IDS sensor. That means the main goal 
 
 ### Step 01 - Install Suricata and Verify Npcap
 
-Suricata is installed on Windows from the official installer. The installation directory is `C:\Program Files\Suricata\`, and the important components include `suricata.exe` as the main executable, `suricata.yaml` as the configuration file, `rules\` as the rule directory, and `log\` as the output folder.
-
-Npcap is required so Suricata can capture packets from the network interface. Without packet capture support, Suricata may be installed correctly but still fail to inspect live traffic.
+Suricata is installed on Windows under `C:\Program Files\Suricata\`. Key components include `suricata.exe`, `suricata.yaml`, `rules\`, and `log\`. Npcap is required so Suricata can capture packets from the network interface.
 
 > Packet capture is the sensor layer for IDS visibility. If Npcap is missing or stopped, Suricata may be installed but unable to inspect live traffic.
 
@@ -63,9 +53,7 @@ The interface name is important because Suricata must listen on the adapter that
 
 ### Step 02 - Enable EVE JSON Logging
 
-Suricata is configured to write EVE JSON output to `eve.json`. EVE JSON is useful for SIEM ingestion because fields such as alert signature, source IP, destination IP, protocol, and event type are structured.
-
-Suricata can also write other logs such as `fast.log` for quick alert summaries and `stats.log` for sensor statistics. In this project, `eve.json` is the most important file because Wazuh can ingest it as structured JSON.
+Suricata is configured to write EVE JSON output to `eve.json`. Other logs such as `fast.log` and `stats.log` can be useful, but `eve.json` is the main file for Wazuh ingestion because it is structured JSON.
 
 > JSON logs are easier for SIEM platforms to parse than plain text logs. This makes dashboards, filters, and detection rules more reliable.
 
@@ -81,7 +69,7 @@ outputs:
 
 <p><sub><strong>Screenshot 014 - Suricata EVE JSON Logging:</strong> suricata.yaml is configured to write EVE JSON output, which becomes the log file collected by Wazuh.</sub></p>
 
-The screenshot confirms the EVE JSON output configuration. The full snippet is stored in [configs/suricata-eve-json.yaml](../../configs/suricata-eve-json.yaml).
+The screenshot confirms the EVE JSON output configuration. The full snippet is stored in [suricata-eve-json.yaml](suricata-eve-json.yaml).
 
 ---
 
@@ -121,13 +109,13 @@ Restart-Service -Name WazuhSvc
 
 <p><sub><strong>Screenshot 015 - Wazuh Localfile for Suricata EVE:</strong> The Wazuh agent configuration points to the Suricata EVE JSON log file.</sub></p>
 
-The screenshot confirms the localfile path used by Wazuh. The full snippet is stored in [configs/suricata-wazuh-localfile.xml](../../configs/suricata-wazuh-localfile.xml).
+The screenshot confirms the localfile path used by Wazuh. The full snippet is stored in [suricata-wazuh-localfile.xml](suricata-wazuh-localfile.xml).
 
 ---
 
 ### Step 05 - Generate Traffic and Validate Alerts
 
-Test traffic is generated and the Wazuh dashboard is filtered for Suricata-related events. The lab uses basic traffic generation to confirm the ingestion path.
+Test traffic is generated and the Wazuh dashboard is filtered for Suricata-related events. The goal is to confirm the ingestion path.
 
 > A test command validates the pipeline, not full detection coverage. More realistic attacks or known test signatures would be required to validate a production IDS policy.
 
@@ -143,26 +131,23 @@ The evidence confirms Suricata-to-Wazuh log visibility. It does not prove that e
 
 ---
 
-## Validation
+## Validation and Summary
 
-Suricata writes EVE JSON, Wazuh reads the log file, and Suricata events appear in Wazuh Threat Hunting. This validates the IDS log-ingestion path.
-
-## Chapter Summary
-
-Suricata adds network detection telemetry to the lab. The next chapter adds VirusTotal enrichment so Wazuh can enrich file-related alerts with external reputation context.
+Suricata writes EVE JSON, Wazuh reads the log file, and Suricata events appear in Wazuh Threat Hunting. This validates the IDS log-ingestion path, while production IDS coverage would still require tuned rules, realistic traffic, and false-positive review.
 
 ---
 
 ## Project Chapters
 
-| Chapter | Description |
-|---------|-------------|
-| [Project Overview](../01-project-overview/README.md) | Scenario, architecture, tools, and lab traffic flow |
-| [Wazuh Server and Agent Onboarding](../02-wazuh-server-agent-onboarding/README.md) | Wazuh OVA deployment, dashboard access, service recovery, and Windows agent registration |
-| [pfSense Log Integration](../03-pfsense-log-integration/README.md) | Firewall VM setup, remote syslog forwarding, and Wazuh decoder/rule logic |
-| [Suricata IDS Integration](../04-suricata-ids-integration/README.md) | Suricata installation, EVE JSON logging, Wazuh ingestion, and alert validation |
-| [VirusTotal Threat Intelligence](../05-virustotal-threat-intelligence/README.md) | API key handling, Wazuh manager integration, and monitored directory enrichment |
-| [File Integrity Monitoring](../06-file-integrity-monitoring/README.md) | Windows FIM configuration and file create/modify/delete alert validation |
-| [Sysmon Log Ingestion](../07-sysmon-log-ingestion/README.md) | Windows Event Log concepts, Sysmon installation, and EventChannel ingestion |
-| [SSH Brute Force Detection](../08-ssh-brute-force-detection/README.md) | Hydra simulation, Wazuh detection, Windows Event 4625 analysis, and defensive controls |
-| [Final Summary](../09-final-summary/README.md) | Results, limitations, skills, and hardening recommendations |
+| # | Chapter | Description |
+|---|---------|-------------|
+| 0 | [Project Overview](../../README.md) | Main project overview, objectives, tools, and skills |
+| 1 | [Topology and Lab Environment](../01-topology-and-lab-environment/README.md) | Lab architecture, component roles, telemetry flow, and trust boundaries |
+| 2 | [Wazuh Server and Agent Onboarding](../02-wazuh-server-agent-onboarding/README.md) | Wazuh OVA access, service recovery, and Windows agent registration |
+| 3 | [pfSense Log Integration](../03-pfsense-log-integration/README.md) | Firewall setup, remote syslog forwarding, and Wazuh decoder/rule logic |
+| 4 | [Suricata IDS Integration](../04-suricata-ids-integration/README.md) | Suricata EVE JSON logging, Wazuh ingestion, and alert validation |
+| 5 | [VirusTotal Threat Intelligence](../05-virustotal-threat-intelligence/README.md) | API key handling, Wazuh manager integration, and monitored directory enrichment |
+| 6 | [File Integrity Monitoring](../06-file-integrity-monitoring/README.md) | Windows FIM configuration and file-change alert validation |
+| 7 | [Sysmon Log Ingestion](../07-sysmon-log-ingestion/README.md) | Windows Event Log concepts, Sysmon setup, and EventChannel ingestion |
+| 8 | [SSH Brute Force Detection](../08-ssh-brute-force-detection/README.md) | Hydra simulation, Wazuh detection, and Windows Event 4625 analysis |
+| 9 | [Final Summary](../09-final-summary/README.md) | Validation summary, production recommendations, and skills demonstrated |

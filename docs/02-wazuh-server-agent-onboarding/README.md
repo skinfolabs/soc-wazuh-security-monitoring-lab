@@ -2,27 +2,18 @@
 
 This chapter combines Wazuh server deployment with Windows agent onboarding. The Wazuh server provides the manager, indexer, and dashboard, while the Windows agent collects endpoint telemetry and forwards it to the manager.
 
----
-
-## Purpose
-
-The goal is to bring the Wazuh platform online, recover from a dashboard readiness issue when services are not fully started, and enroll a Windows endpoint as an active monitored agent.
-
 ## Technical Context
 
-Wazuh provides an OVA virtual appliance that can be imported into VMware. An OVA is useful in a lab because it packages the Wazuh manager, indexer, and dashboard into a ready virtual machine instead of requiring each component to be installed manually. After booting the VM, the server IP is used to reach the dashboard over HTTPS.
+Wazuh provides an OVA virtual appliance that packages the manager, indexer, and dashboard into one VMware-ready VM. The manager receives and decodes events, the indexer stores searchable data, and the dashboard provides the analyst interface.
 
-The Wazuh server is the central analysis side of the lab. The manager receives events, decodes them, applies detection rules, and generates alerts. The indexer stores the data for search and visualization. The dashboard is the analyst interface used to review agents, alerts, modules, and threat-hunting results.
+The Windows endpoint is enrolled with the Wazuh agent, which collects local telemetry and forwards it to the manager. In this lab, that same agent later supports File Integrity Monitoring, Sysmon collection, Suricata log ingestion, and failed-logon visibility.
 
-The Windows endpoint is then enrolled with the Wazuh agent. The agent is a lightweight application installed on systems such as Windows, Linux, and macOS. It collects security telemetry and forwards it to the manager. Its modules can support log collection, File Integrity Monitoring, Security Configuration Assessment, and malware-related checks. In this lab, the same Windows agent becomes important later for FIM, Sysmon, Suricata log ingestion, and failed-logon visibility.
+**Implemented controls:**
 
-## Steps Covered
-
-| Step | Description |
-|------|-------------|
-| Import and access Wazuh | Start the OVA and open the dashboard |
-| Troubleshoot services | Start Wazuh manager, dashboard, and indexer services |
-| Deploy Windows agent | Generate and run endpoint enrollment commands |
+- Imported and accessed the Wazuh OVA appliance.
+- Recovered the dashboard when backend services were not ready.
+- Generated the Windows agent deployment commands.
+- Registered and validated the Windows endpoint as an active Wazuh agent.
 
 ---
 
@@ -30,7 +21,7 @@ The Windows endpoint is then enrolled with the Wazuh agent. The agent is a light
 
 ### Step 01 - Import the Wazuh OVA and Find the Server IP
 
-The Wazuh OVA is imported into VMware and started as the central SIEM virtual machine. After boot, the server IP is identified from the terminal so the dashboard can be reached through a browser.
+The Wazuh OVA is imported into VMware and started as the central SIEM VM. After boot, the server IP is identified so the dashboard can be reached through a browser.
 
 > The Wazuh server is the central collection and analysis point. If its IP address is wrong or unreachable, no endpoint onboarding or dashboard validation can happen. The dashboard may be the visible interface, but it depends on the manager and indexer services behind it.
 
@@ -42,7 +33,7 @@ ifconfig
 
 <p><sub><strong>Screenshot 002 - Wazuh Login Page:</strong> The Wazuh login page is reachable over HTTPS, confirming that the browser can reach the Wazuh dashboard service.</sub></p>
 
-The login page confirms network reachability to the Wazuh server. The lab uses the default appliance credentials only for initial access and setup.
+The login page confirms network reachability to the Wazuh server.
 
 ---
 
@@ -76,7 +67,7 @@ The evidence confirms that the service issue was resolved and the dashboard beca
 
 ### Step 03 - Generate the Windows Agent Deployment
 
-The Wazuh dashboard is used to deploy a new agent. Windows is selected as the target package, the Wazuh manager address is entered, and a unique agent name such as `PC1` is assigned.
+The dashboard is used to deploy a Windows agent. The manager address is entered, and a unique agent name such as `PC1` is assigned.
 
 > The agent is the endpoint sensor. Choosing the correct operating system package matters because Windows, Linux, and macOS agents are installed differently. Agent names make endpoint telemetry easier to identify in alerts, dashboards, and threat-hunting views.
 
@@ -94,7 +85,7 @@ The server address binds the endpoint to the correct manager. The agent name bec
 
 ### Step 04 - Register and Start the Windows Agent
 
-Wazuh generates the Windows enrollment commands after the platform, manager address, and agent name are configured. The generated commands are run in PowerShell as Administrator so the endpoint can install, register, and start the agent service.
+Wazuh generates the Windows enrollment commands after the platform, manager address, and agent name are configured. The commands are run in an Administrator PowerShell session to install, register, and start the agent service.
 
 > The registration command is the bridge between the endpoint and the manager. Installation alone is not enough; the agent must also know where to send telemetry and must start its Windows service.
 
@@ -122,26 +113,23 @@ After installation, the Windows agent files are stored under `C:\Program Files (
 
 ---
 
-## Validation
+## Validation and Summary
 
-The Wazuh dashboard loads successfully, the service-readiness issue is resolved, and the Windows endpoint appears as an active Wazuh agent. This confirms server availability and endpoint communication.
-
-## Chapter Summary
-
-Wazuh is operational and the Windows endpoint is enrolled. The next chapter adds pfSense firewall telemetry so Wazuh can receive network gateway events in addition to endpoint data.
+The Wazuh dashboard loads successfully, the service-readiness issue is resolved, and the Windows endpoint appears as an active Wazuh agent. This confirms server availability, endpoint communication, and the base telemetry path required for FIM, Sysmon, Suricata log collection, and brute-force detection.
 
 ---
 
 ## Project Chapters
 
-| Chapter | Description |
-|---------|-------------|
-| [Project Overview](../01-project-overview/README.md) | Scenario, architecture, tools, and lab traffic flow |
-| [Wazuh Server and Agent Onboarding](../02-wazuh-server-agent-onboarding/README.md) | Wazuh OVA deployment, dashboard access, service recovery, and Windows agent registration |
-| [pfSense Log Integration](../03-pfsense-log-integration/README.md) | Firewall VM setup, remote syslog forwarding, and Wazuh decoder/rule logic |
-| [Suricata IDS Integration](../04-suricata-ids-integration/README.md) | Suricata installation, EVE JSON logging, Wazuh ingestion, and alert validation |
-| [VirusTotal Threat Intelligence](../05-virustotal-threat-intelligence/README.md) | API key handling, Wazuh manager integration, and monitored directory enrichment |
-| [File Integrity Monitoring](../06-file-integrity-monitoring/README.md) | Windows FIM configuration and file create/modify/delete alert validation |
-| [Sysmon Log Ingestion](../07-sysmon-log-ingestion/README.md) | Windows Event Log concepts, Sysmon installation, and EventChannel ingestion |
-| [SSH Brute Force Detection](../08-ssh-brute-force-detection/README.md) | Hydra simulation, Wazuh detection, Windows Event 4625 analysis, and defensive controls |
-| [Final Summary](../09-final-summary/README.md) | Results, limitations, skills, and hardening recommendations |
+| # | Chapter | Description |
+|---|---------|-------------|
+| 0 | [Project Overview](../../README.md) | Main project overview, objectives, tools, and skills |
+| 1 | [Topology and Lab Environment](../01-topology-and-lab-environment/README.md) | Lab architecture, component roles, telemetry flow, and trust boundaries |
+| 2 | [Wazuh Server and Agent Onboarding](../02-wazuh-server-agent-onboarding/README.md) | Wazuh OVA access, service recovery, and Windows agent registration |
+| 3 | [pfSense Log Integration](../03-pfsense-log-integration/README.md) | Firewall setup, remote syslog forwarding, and Wazuh decoder/rule logic |
+| 4 | [Suricata IDS Integration](../04-suricata-ids-integration/README.md) | Suricata EVE JSON logging, Wazuh ingestion, and alert validation |
+| 5 | [VirusTotal Threat Intelligence](../05-virustotal-threat-intelligence/README.md) | API key handling, Wazuh manager integration, and monitored directory enrichment |
+| 6 | [File Integrity Monitoring](../06-file-integrity-monitoring/README.md) | Windows FIM configuration and file-change alert validation |
+| 7 | [Sysmon Log Ingestion](../07-sysmon-log-ingestion/README.md) | Windows Event Log concepts, Sysmon setup, and EventChannel ingestion |
+| 8 | [SSH Brute Force Detection](../08-ssh-brute-force-detection/README.md) | Hydra simulation, Wazuh detection, and Windows Event 4625 analysis |
+| 9 | [Final Summary](../09-final-summary/README.md) | Validation summary, production recommendations, and skills demonstrated |
