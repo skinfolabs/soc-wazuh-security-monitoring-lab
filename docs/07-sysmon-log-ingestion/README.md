@@ -40,7 +40,8 @@ Windows logs include System, Application, Security, Setup, and Forwarded Events.
 |----------|---------|
 | `4720` | User account created |
 | `4726` | User account deleted |
-| `4741` | User account changed |
+| `4738` | User account changed |
+| `4741` | Computer account created |
 | `4624` | Successful logon |
 | `4625` | Failed logon |
 | `4104` | PowerShell script block logging |
@@ -48,7 +49,7 @@ Windows logs include System, Application, Security, Setup, and Forwarded Events.
 | `2003` | USB device connected |
 | `1102` | Security log cleared |
 
-The table identifies the event IDs later used for endpoint investigation and brute-force analysis.
+The table identifies useful Windows security and operational events for endpoint investigation. Event meaning depends on the log channel and event provider, so the event ID should always be reviewed together with its source, message, and fields.
 
 ---
 
@@ -91,7 +92,7 @@ The Wazuh agent reads Sysmon events from the Windows EventChannel and forwards t
 ```
 
 ```powershell
-Restart-Service -Name wazuh
+Restart-Service -Name WazuhSvc
 ```
 
 The snippet is stored in [configs/sysmon-eventchannel-localfile.xml](../../configs/sysmon-eventchannel-localfile.xml).

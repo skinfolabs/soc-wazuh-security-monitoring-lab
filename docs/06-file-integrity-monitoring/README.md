@@ -40,7 +40,7 @@ The Windows endpoint agent configuration is edited at `C:\Program Files (x86)\os
 
 ```powershell
 notepad "C:\Program Files (x86)\ossec-agent\ossec.conf"
-Restart-Service -Name wazuh
+Restart-Service -Name WazuhSvc
 ```
 
 In this configuration, `check_all="yes"` enables broad file attribute checks, `report_changes="yes"` allows Wazuh to report content changes where supported, and `realtime="yes"` makes the agent watch the folder continuously instead of only waiting for scheduled scans.

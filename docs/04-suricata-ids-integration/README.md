@@ -33,6 +33,7 @@ In this project, Suricata is treated as an IDS sensor. That means the main goal 
 |------|-------------|
 | Install and prepare Suricata | Install Suricata and Npcap |
 | Enable EVE JSON | Configure `suricata.yaml` |
+| Run Suricata | Start the IDS sensor on the selected interface |
 | Ingest EVE logs | Add Wazuh agent localfile entry |
 | Validate alerts | Generate test traffic and review Threat Hunting |
 
@@ -113,7 +114,7 @@ The Wazuh agent is configured with a `localfile` entry that points to Suricata's
 ```
 
 ```powershell
-Restart-Service -Name wazuh
+Restart-Service -Name WazuhSvc
 ```
 
 ![Screenshot 015 - Wazuh Localfile for Suricata EVE](../../images/04-suricata-ids-integration/015-wazuh-agent-suricata-localfile.png)

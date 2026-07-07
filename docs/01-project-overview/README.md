@@ -67,21 +67,6 @@ Some areas still require deeper production validation. pfSense decoder matching 
 | Logs / Alerts | Wazuh Threat Hunting alerts for Suricata, FIM, and SSH failed-logon activity |
 | Configs | Wazuh syslog input, pfSense parsing rules, Suricata EVE output, VirusTotal integration, FIM syscheck, and Sysmon EventChannel collection |
 
-## Chapter Map
-
-| Chapter | What It Covers |
-|---------|----------------|
-| [Wazuh Server and Agent Onboarding](../02-wazuh-server-agent-onboarding/README.md) | Wazuh OVA access, service troubleshooting, and Windows endpoint enrollment |
-| [pfSense Log Integration](../03-pfsense-log-integration/README.md) | Firewall setup, remote syslog forwarding, and Wazuh parsing logic |
-| [Suricata IDS Integration](../04-suricata-ids-integration/README.md) | IDS installation, EVE JSON output, localfile ingestion, and alert validation |
-| [VirusTotal Threat Intelligence](../05-virustotal-threat-intelligence/README.md) | API key handling, manager integration, and monitored directory setup |
-| [File Integrity Monitoring](../06-file-integrity-monitoring/README.md) | Windows folder monitoring and file-change alert validation |
-| [Sysmon Log Ingestion](../07-sysmon-log-ingestion/README.md) | Windows Event Log concepts, Sysmon setup, and EventChannel collection |
-| [SSH Brute Force Detection](../08-ssh-brute-force-detection/README.md) | Hydra simulation, Wazuh alerts, and Windows Event 4625 analysis |
-| [Final Summary](../09-final-summary/README.md) | Confirmed results, evidence limits, skills, and defensive recommendations |
-
----
-
 ## Project Chapters
 
 | Chapter | Description |

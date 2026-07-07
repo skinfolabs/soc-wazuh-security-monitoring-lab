@@ -49,7 +49,7 @@ This chapter summarizes the confirmed results, evidence limits, skills demonstra
 
 ## Final Result
 
-The lab demonstrates a complete SOC monitoring workflow using Wazuh as the central platform. Endpoint, firewall, IDS, threat-intelligence, file-integrity, Sysmon, and authentication-failure data are documented and connected into a single portfolio project.
+The lab demonstrates a complete SOC monitoring workflow using Wazuh as the central platform. Endpoint, firewall, IDS, threat-intelligence, file-integrity, Sysmon, and authentication-failure data are documented and connected into a single SOC monitoring project.
 
 ---
 

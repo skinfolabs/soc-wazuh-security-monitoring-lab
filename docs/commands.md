@@ -46,7 +46,7 @@ Start-Service -Name npcap
 Get-NetAdapter | Select Name, Status
 cd "C:\Program Files\Suricata\"
 suricata -c suricata.yaml -i <interface>
-Restart-Service -Name wazuh
+Restart-Service -Name WazuhSvc
 ping google.com
 ```
 
@@ -61,7 +61,7 @@ sudo systemctl restart wazuh-manager
 
 ```powershell
 notepad "C:\Program Files (x86)\ossec-agent\ossec.conf"
-Restart-Service -Name wazuh
+Restart-Service -Name WazuhSvc
 ```
 
 ## Sysmon
@@ -69,7 +69,7 @@ Restart-Service -Name wazuh
 ```powershell
 sysmon.exe -i -accepteula
 sysmon -c sysmonconfig.xml
-Restart-Service -Name wazuh
+Restart-Service -Name WazuhSvc
 ```
 
 ## SSH Brute Force Simulation
